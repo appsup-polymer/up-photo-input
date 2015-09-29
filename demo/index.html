@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+    <title>up-photo-input Demo</title>
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="../up-photo-input.html">
+    <link rel="import" href="../../paper-button/paper-button.html">
+    <style>
+      img {
+        border-radius: 50%;
+      }
+    </style>
+  </head>
+  <body unresolved>
+
+    <p>An example of <code>&lt;up-photo-input&gt;</code>:</p>
+
+    <template is="dom-bind">
+
+      <up-photo-input value="{{imageUrl}}" target-width="200" target-height="200" encoding-type="png">
+        <div class="layout vertical center">
+          <img src$="{{imageUrl}}">
+          <paper-button raised>take picture</paper-button>
+        </div>
+      </up-photo-input>
+
+
+    </template>
+
+
+  </body>
+</html>

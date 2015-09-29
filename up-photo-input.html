@@ -1,0 +1,147 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-form-element-behavior/iron-form-element-behavior.html">
+
+<!--
+An element for getting a photo, either from an image file or (on supported mobile browsers) from a camera.
+The image is returned as a data url.
+
+Example:
+
+      <up-photo-input value="{{imageUrl}}">
+          <img src$="{{imageUrl}}">
+          <paper-button raised>take picture</paper-button>
+      </up-photo-input>
+
+@group AppsUp Elements
+@element up-photo-input
+@demo demo/index.html
+-->
+<dom-module id="up-photo-input">
+
+    <template>
+        <content></content>
+        <input type="file" id="file" hidden on-change="_fileChanged">
+    </template>
+
+</dom-module>
+
+<script>
+
+    Polymer({
+
+        is: 'up-photo-input',
+
+        properties: {
+
+            /**
+             * The required image format.
+             */
+            encodingType: {
+                type: String,
+                value: "jpeg"
+            },
+
+            /**
+             * The required width of the image. When both target-width and target-height are 0, the image is not
+             * resized. When one of target-width or target-heigth is equal to 0, the aspect ratio is kept constant.
+             *
+             */
+            targetWidth: {
+                type: Number,
+                value: 0
+            },
+
+            /**
+             * The required height of the image. When both target-width and target-height are 0, the image is not
+             * resized. When one of target-width or target-heigth is equal to 0, the aspect ratio is kept constant.
+             *
+             */
+            targetHeight: {
+                type: Number,
+                value: 0
+            },
+
+            /**
+             * An image encoded as data url, with image format as defined by encoding-type and size as defined by
+             * target-width and target-height.
+             *
+             */
+            value: {
+                type: String,
+                notify: true
+            }
+
+        },
+
+        behaviors: [
+            Polymer.IronFormElementBehavior
+        ],
+
+        listeners: {
+            'tap': '_onTap'
+        },
+
+        _onTap: function() {
+            this.$.file.click();
+        },
+
+        _fileChanged: function(e) {
+            var input = e.target;
+            var self = this;
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    self._resize(e.target.result);
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        },
+
+        _resize: function(data) {
+            var img = document.createElement("img");
+
+
+            img.onload = function() {
+                var canvas = document.createElement("canvas");
+                var ctx = canvas.getContext('2d');
+
+                var sx, sy, swidth, sheight;
+                var width = this.targetWidth,
+                        height = this.targetHeight;
+                if (width===0&&height===0) {
+                    width = img.width;
+                    height = img.height;
+                }
+                if (width===0) {
+                    width = img.width/img.height*height;
+                }
+                if (height===0) {
+                    height = img.height/img.width*width;
+                }
+                if (img.width/img.height > width/height) {
+                    sheight = img.height;
+                    swidth = img.height*width/height;
+                    sy = 0;
+                    sx = (img.width-swidth)/2;
+                } else {
+                    swidth = img.width;
+                    sheight = img.width*height/width;
+                    sx = 0;
+                    sy = (img.height-sheight)/2;
+                }
+
+                canvas.width=width;
+                canvas.height=height;
+                ctx.drawImage(img, sx, sy, swidth, sheight, 0, 0, width, height);
+
+                this.value = canvas.toDataURL("image/"+this.encodingType.toLowerCase());
+            }.bind(this);
+            img.src = data;
+
+        }
+
+
+    });
+
+</script>
