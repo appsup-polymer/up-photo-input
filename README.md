@@ -1,6 +1,6 @@
 # up-photo-input
 
-An element for getting a photo, either from an image file or (on supported mobile browsers) from a camera.
+A polymer element for getting a photo, either from an image file or (on supported mobile browsers) from a camera.
 
 ## Usage
 
